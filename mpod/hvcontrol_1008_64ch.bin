@@ -1,0 +1,1345 @@
+#!/usr/bin/perl -w
+#$ENV{"LD_LIBRARY_PATH"}= "/home/purschke/install/lib";
+
+####################################
+# variables definition
+####################################
+
+$ip = "10.20.34.148";
+#$mpath = "-M +/home/haggerty/hcalburnin/mpod";
+#$mpath = "-M +/home/drichf1/hcalburnin/mpod";
+$mpath = "-M +/home/phnxrc/haggerty/MIBS";
+#$mpath = "";
+$mib_module = "$mpath -m +WIENER-CRATE-MIB";
+
+$sPHENIX_HVSet = "./mpod_voltage.txt";
+
+$DisableChannels = "./DisableChannels.txt";
+
+
+####################################
+# channel map
+####################################
+
+my @det_chan =  (
+    "HCAL0",   #    "U0",  #
+    "HCAL1",   #    "U1",  #
+    "HCAL2",   #    "U2",  #
+    "HCAL3",   #    "U3",  #
+    "HCAL4",   #    "U4",  #
+    "HCAL5",   #    "U5",  #
+    "HCAL6",   #    "U6",  #
+    "HCAL7",   #    "U7",  #
+    "HCAL8",   #    "U100", #
+    "HCAL9",   #    "U101", #
+    "HCAL10",  #    "U102", #
+    "HCAL11",  #    "U103", #
+    "HCAL12",  #    "U104", #
+    "HCAL13",  #    "U105", #
+    "HCAL14",  #    "U106", #
+    "HCAL15",  #    "U107", #
+    "HCAL16",  #    "U200", #
+    "HCAL17",  #    "U201", #
+    "HCAL18",  #    "U202", #
+    "HCAL19",  #    "U203", #
+    "HCAL20",  #    "U204", #
+    "HCAL21",  #    "U205", #
+    "HCAL22",  #    "U206", #
+    "HCAL23",  #    "U207", #
+    "HCAL24",  #    "U300", #
+    "HCAL25",  #    "U301", #
+    "HCAL26",  #    "U302", #
+    "HCAL27",  #    "U303", #
+    "HCAL28",  #    "U304", #
+    "HCAL29",  #    "U305", #
+    "HCAL30",  #    "U306", #
+    "HCAL31",  #    "U307", #
+    "HCAL32",  #    "U400", #
+    "HCAL33",  #    "U401", #
+    "HCAL34",  #    "U402", #
+    "HCAL35",  #    "U403", #
+    "HCAL36",  #    "U404", #
+    "HCAL37",  #    "U405", #
+    "HCAL38",  #    "U406", #
+    "HCAL39",  #    "U407", #
+    "HCAL40",  #    "U500", #
+    "HCAL41",  #    "U501", #
+    "HCAL42",  #    "U502", #
+    "HCAL43",  #    "U503", #
+    "HCAL44",  #    "U504", #
+    "HCAL45",  #    "U505", #
+    "HCAL46",  #    "U506", #
+    "HCAL47",  #    "U507", #
+    "HCAL48",  #    "U600", #
+    "HCAL49",  #    "U601", #
+    "HCAL50",  #    "U602", #
+    "HCAL51",  #    "U603", #
+    "HCAL52",  #    "U604", #
+    "HCAL53",  #    "U605", #
+    "HCAL54",  #    "U606", #
+    "HCAL55",  #    "U607", #
+    "HCAL56",  #    "U700", #
+    "HCAL57",  #    "U701", #
+    "HCAL58",  #    "U702", #
+    "HCAL59",  #    "U703", #
+    "HCAL60",  #    "U704", #
+    "HCAL61",  #    "U705", #
+    "HCAL62",  #    "U706", #
+    "HCAL63"  #    "u707"  #
+    );
+
+my @chan_ID =  (
+    "u0",  #HCAL0
+    "u1",  #HCAL1
+    "u2",  #HCAL2
+    "u3",  #HCAL3
+    "u4",  #HCAL4
+    "u5",  #HCAL5
+    "u6",  #HCAL6
+    "u7",  #HCAL7
+    "u100", #HCAL8
+    "u101", #HCAL9
+    "u102", #HCAL10
+    "u103", #HCAL11
+    "u104", #HCAL12
+    "u105", #HCAL13
+    "u106", #HCAL14
+    "u107", #HCAL15
+    "u200", #HCAL16
+    "u201", #HCAL17
+    "u202", #HCAL18
+    "u203", #HCAL19
+    "u204", #HCAL20
+    "u205", #HCAL21
+    "u206", #HCAL22
+    "u207", #HCAL23
+    "u300", #HCAL24
+    "u301", #HCAL25
+    "u302", #HCAL26
+    "u303", #HCAL27
+    "u304", #HCAL28
+    "u305", #HCAL29
+    "u306", #HCAL30
+    "u307", #HCAL31
+    "u400", #HCAL32
+    "u401", #HCAL33
+    "u402", #HCAL34
+    "u403", #HCAL35
+    "u404", #HCAL36
+    "u405", #HCAL37
+    "u406", #HCAL38
+    "u407", #HCAL39
+    "u500", #HCAL40
+    "u501", #HCAL41
+    "u502", #HCAL42
+    "u503", #HCAL43
+    "u504", #HCAL44
+    "u505", #HCAL45
+    "u506", #HCAL46
+    "u507", #HCAL47
+    "u600", #HCAL48
+    "u601", #HCAL49
+    "u602", #HCAL50
+    "u603", #HCAL51
+    "u604", #HCAL52
+    "u605", #HCAL53
+    "u606", #HCAL54
+    "u607", #HCAL55
+    "u700", #HCAL56
+    "u701", #HCAL57
+    "u702", #HCAL58
+    "u703", #HCAL59
+    "u704", #HCAL60
+    "u705", #HCAL61
+    "u706", #HCAL62
+    "u707"  #HCAL63
+   );
+
+
+$channel_count = scalar(@chan_ID);
+
+####################################
+
+if ( $#ARGV < 0)
+{
+    print "$channel_count\n";
+    help();
+    exit;
+}
+
+if ($ARGV[0] =~  /help/) 
+{
+    help();
+    exit;
+}
+
+if ($ARGV[0] =~  /mainframe/) 
+{ 
+    if ($ARGV[1] =~ /status/)
+    {
+	mainframe_status();
+	exit;
+    }
+    elsif ($ARGV[1] =~ /on/)
+    { 
+	mainframe_power_on_off(1);
+	exit;
+    } 
+    elsif ($ARGV[1] =~ /off/)
+    {
+	mainframe_power_on_off(0);
+	exit;
+    } 
+    else
+    {
+	print "Unknown Parameter $ARGV[1]\n";
+	exit;
+    }
+}
+
+if ($ARGV[0] =~  /init/) 
+{
+    init();
+    exit;
+}
+
+if ($ARGV[0] =~  /generate/) 
+{
+    generate_init();
+    exit;
+}
+
+if ($ARGV[0] =~ /channel/) 
+{
+
+    $chan = $ARGV[2];
+    if ($ARGV[1] =~ /list/) 
+    {
+	channel_list();
+	exit;
+    } 
+    elsif ($ARGV[1] =~ /map/) 
+    {
+	print "Channel Map";
+	channel_map();
+	exit;
+    } 
+    elsif ($ARGV[1] =~ /on/) 
+    {
+	channel_on_off(1, $chan);
+	exit;
+    } 
+    elsif ($ARGV[1] =~ /off/) 
+    {
+	channel_on_off(0, $chan);
+	exit;
+    } 
+    elsif ($ARGV[1] =~ /status/) 
+    {
+	channel_status($chan, 0);
+	exit;
+    } 
+    elsif ($ARGV[1] =~ /detailed/) 
+    {
+	channel_status($chan, 1);
+	exit;
+    } 
+    else 
+    {
+	print "Unknown Parameter $ARGV[1]\n";
+	exit;
+    }
+}
+
+if ($ARGV[0] =~ /voltage/) 
+{
+    channel_voltage_get_set($ARGV[1], $ARGV[2]);
+    exit;
+} 
+
+if ($ARGV[0] =~ /rampup/) 
+{
+    channel_voltageRiseRate_get_set($ARGV[1], $ARGV[2]);
+    exit;
+} 
+
+if ($ARGV[0] =~ /rampdown/) 
+{
+    channel_voltageFallRate_get_set($ARGV[1], $ARGV[2]);
+    exit;
+} 
+
+if ($ARGV[0] =~ /current/) 
+{
+    channel_current_get_set($ARGV[1], $ARGV[2]);
+    exit;
+} 
+
+if ($ARGV[0] =~ /tripbehavior/) 
+{
+    trip_behavior($ARGV[1], $ARGV[2], $ARGV[3]);
+    exit;
+} 
+
+if ($ARGV[0] =~ /clearfailure/) 
+{
+    clear_failure($ARGV[1]);
+    exit;
+} 
+
+if ($ARGV[0] =~ /setdisable/) 
+{
+    set_disable($ARGV[1]);
+    exit;
+} 
+
+if ($ARGV[0] =~ /operating/) 
+{
+    operating();
+    exit;
+} 
+
+if ($ARGV[0] =~ /disable/) 
+{
+    disable_hv();
+    exit;
+} 
+
+if ($ARGV[0] =~ /status/) 
+{
+    status();
+    exit;
+} 
+
+if ($ARGV[0] =~ /getrecovery/) 
+{
+    recovery($ARGV[1]);
+    exit;
+} 
+
+if ($ARGV[0] =~ /interlock/) 
+{
+    interlock();
+    exit;
+} 
+
+if ($ARGV[0] =~ /ejm/) 
+{
+    test_ejm();
+    exit;
+} 
+
+help();
+
+######################################################################
+
+sub help {
+    print "Using: $sPHENIX_HVSet\n";
+    print "       $DisableChannels\n\n";
+
+    print "Execute commands on $ip\n\n";
+    print "Command format: hvcontrol_sPHENIX command P1 P2 P3\n";
+    print "Valid commands are: \n";
+    print "View this help:                            help\n";
+    print "List available HV module channels:         channel list\n";
+    print "View channel map:                          channel map\n";
+    print "Set/Check mainframe status:                mainframe on/off/status\n";
+    print "Set initial settings:                      init\n";
+    print "Check channel status:                      channel status/detailed channel_#\n";
+    print "Turn channels on/off:                      channel on/off channel_#\n";
+    print "Set channel voltages (V):                  voltage channel_# set_value\n"; 
+    print "Set channel voltage ramp up rate (V/s):    rampup channel_# set_value\n";
+    print "Set channel voltage ramp down rate (V/s):  rampdown channel_# set_value\n";
+    print "Set channel current limits (A):            current channel_# set_value\n";
+    print "Set trip behavior:                         tripbehavior channel_# failure_value trip_time \n";
+    print "Reset channel failure status:              clearfailure channel_#\n";
+    print "Disable channel(s):                        setdisable channel_#\n";
+    print "Recover tripped channel(s):                getrecovery channel_#\n";
+    print "Recover interlock trip:                    recoverinterlock\n";
+    print "(For the above commands channel_# = all issues command to all channels)\n";
+    print "(For the above commands set_value = read gives readback of set value)\n";
+    print "Recover interlock trip:                    recoverinterlock\n";
+    return;
+}
+
+sub send_cmd{
+    my $command = $_[0];
+
+#    printf "Send_cmd: $command\n";
+
+    for (my $loop_cnt = 0; $loop_cnt < 5; $loop_cnt++) {
+	@response = `$command`;                                                        ;
+	if ($response[0] !~ /"Timeout"/ ) { 
+	    last;
+	} else {
+	    print "SNMP Command timeout!\n";
+	}
+    }
+        
+    return @response;
+}
+
+
+sub mainframe_status { 
+    $cmd = "snmpget -Oqv -v 2c $mib_module -c public  $ip sysMainSwitch.0";
+    system($cmd);
+    $ok = 1;
+    return $ok;
+}
+
+sub mainframe_power_on_off { 
+    $cmd = "snmpset -Oqv -v 2c $mib_module -c guru  $ip sysMainSwitch.0 i $_[0]";
+
+    if ($_[0] == 1) 
+    {
+	print "Turning Mainframe ON (10 second delay)\n";
+	system($cmd);
+	sleep(10);
+	print "Running mainframe initialization\n";
+	init();
+    } else
+    {
+	print "Turning Mainframe OFF\n";
+	system($cmd);
+
+    }
+    return;
+}
+
+sub generate_init {
+    my $filename = ">$sPHENIX_HVSet";
+    my $disabled_channels = ">$DisableChannels";
+    if($filename)
+    {
+	open(HVFILE, $filename) or die "Initialization failed (HVFILE). Call expert. - $filename: $!";
+	for ($ii = 0; $ii < $channel_count; $ii++)  
+	{
+	    print HVFILE "$det_chan[$ii]  70.0 15 0.2 1.0 \n";
+	}
+	close(HVFILE);
+    }
+    {
+	open(HVFILE, $disabled_channels) or die "Initialization failed (DisableChannel). Call expert. - $filename: $!";
+	close(HVFILE);
+    }
+}
+
+sub init { 
+    $cmd = "snmpget -Oqv -v 2c $mib_module -c public  $ip sysMainSwitch.0";
+    $mfresponse = qx "$cmd";
+    chomp $mfresponse;
+
+    if ($mfresponse ne "on") 
+    {
+	print "Mainframe is off or there is no connection to the mainframe.\n";
+	exit;
+    }
+ 
+    my $filename = "$sPHENIX_HVSet";
+    if($filename)
+    {
+	open(HVFILE, "<", $filename) or die 
+	    "Initialization failed. Call expert. - $filename: $!";
+	while (<HVFILE>) 
+	{
+#	    print "HVFile: $_\n";
+	    @conf_hv = split(/\s+/,$_);
+      
+	    if($conf_hv[1]>100.0 || ($conf_hv[2] * 0.000001)>1000.0 || $conf_hv[3]>5.0)
+#	    if($conf_hv[1]>100.0 || ($conf_hv[2] * 0.000001)>0.25 || $conf_hv[3]>5.0)
+	    {
+		printf("%s:: Wrong initialization:\n", $conf_hv[0]);
+		printf("HV cannot be > 100 V\n");
+		printf("Current limit cannot be > 250uA\n");
+		printf("Ramping rate cannot be > 5 V/s \n");
+ 		exit;
+ 	    } else 
+	    {
+		channel_voltage_get_set($conf_hv[0], $conf_hv[1]);
+		channel_current_get_set($conf_hv[0], $conf_hv[2] * 0.000001);
+		channel_voltageRiseRate_get_set($conf_hv[0], $conf_hv[3]);
+ 		channel_voltageFallRate_get_set($conf_hv[0], $conf_hv[3]);
+ 	    }
+	}
+	close(HVFILE);
+	trip_behavior("all", 1, 50);
+
+	my $disabled_channels = "$DisableChannels";
+	print "File:  $disabled_channels!\n";
+        open(DisFILE,"<",$disabled_channels) or die "Initialization failed. Call expert. - $disabled_channels: $!";
+        while (<DisFILE>) 
+        {
+            @disChannel = split(/\s+/,$_);
+            if($disChannel[0] ne "")
+            {
+		set_disable($disChannel[0]);
+             } else 
+             {
+                 print "No channel to desable.\n";
+             }
+         }
+         close(DisFILE);
+	print "Disable Channel file closed\n";
+    } else 
+    {
+	print "Initialization failed. Call expert.\n";
+	exit;
+    }
+
+    print "Initialization has finished.\n";
+    
+
+    return;
+}
+
+sub channel_list {
+    $cmd = "snmpget -Oqv -v 2c $mib_module -c public  $ip sysMainSwitch.0";
+    $mfresponse = qx "$cmd";
+    chomp $mfresponse;
+    if ($mfresponse ne "on") 
+    {
+	print "Mainframe is off or there is no connection to the mainframe.\n";
+	exit;
+    }
+
+    $cmd = "snmpwalk -Cp -Oqv -v 2c $mib_module -c guru $ip outputIndex";
+    @response = send_cmd($cmd);
+    print "@response\n";
+    return;
+}
+
+sub channel_map {
+    print "channel map: Channel out: $channel_count\n";
+    for ($ii = 0; $ii < $channel_count; $ii++)  
+    {
+	print "$det_chan[$ii]    $chan_ID[$ii]\n";
+    }
+    return;
+}
+
+sub channel_status {
+    my ($cnt, $ii, $id, $detailed, $adjust_chan);
+    $cmd = "snmpget -Oqv -v 2c $mib_module -c public  $ip sysMainSwitch.0";
+
+    $mfresponse = qx "$cmd";
+    chomp $mfresponse;
+    if ($mfresponse ne "on") 
+    {
+	print "Mainframe is off or there is no connection to the mainframe.\n";
+	exit;
+    }
+
+    $id = $_[0];
+    $detailed = $_[1];
+
+    if ($detailed == 1) 
+    {
+	print "Channel       Set Values        Measured Values\n";
+    }
+
+    if ($id ne "all") 
+    {
+	$cnt = 1;
+	for ($ii = 0; $ii < $channel_count; $ii++)  
+	{
+	    if ($id eq $det_chan[$ii])
+	    {
+		$chan[0] = $chan_ID[$ii];
+		$dchannel[0] = $det_chan[$ii];
+	    }
+	}
+
+	$cmd = "snmpget -OqvU -v 2c $mib_module -c public $ip outputVoltage.$chan[0]";
+	$volt = qx "$cmd";
+	chomp $volt;
+
+	$cmd = "snmpget -OqvU -v 2c $mib_module -c public $ip outputCurrent.$chan[0]";
+	$amp = qx "$cmd";
+	chomp $amp;
+
+	$cmd = "snmpget -OqvU -v 2c $mib_module -c public $ip outputMeasurementSenseVoltage.$chan[0]";
+	$svolt = qx "$cmd";
+	chomp $svolt;
+
+	$cmd = "snmpget -OqvU -v 2c $mib_module -c public $ip outputMeasurementCurrent.$chan[0]";
+	$samp = qx "$cmd";
+	chomp $samp;
+
+	$cmd = "snmpget -OqvU -v 2c $mib_module -c public $ip outputSwitch.$chan[0]";
+	$switch = qx "$cmd";
+	chomp $switch;
+
+	$outputstat = `snmpget -v 2c $mib_module -c public $ip outputStatus.$chan[0]`;
+	if ($outputstat =~ /outputFailureMaxCurrent/)
+	{
+	    $stat = "Trip";
+	}
+	elsif ($outputstat =~ /outputEmergencyOff/) 
+ 	{
+	    $stat = "Dis";
+	} 
+	elsif ($outputstat =~ /outputInhibit
+ls/) 
+ 	{
+	    $stat = "Inhibited";
+	} 
+	else
+	{
+	    $stat = "Ok";
+	}
+
+	if ($detailed == 1) 
+	{
+	    printf "%s: %3.2f V %7.6f A  %3.2f V %10.9f A %s %s\n", $dchannel[0], $volt, $amp, $svolt, $samp, $switch, $stat;
+	}
+	else
+	{
+	    printf "%s %3.2f %7.6f %3.2f %10.9f %s %s\n", $dchannel[0], $volt, $amp, $svolt, $samp, $switch, $stat;
+	}
+
+    } 
+    else 
+    {
+	$cnt = $channel_count;
+	for ($ii = 0; $ii < $cnt; $ii++) 
+	{ 
+	    $chan[$ii] = $chan_ID[$ii];
+	    $dchannel[$ii] = $det_chan[$ii];
+	}
+
+	$cmd = "snmpwalk -OqU -v 2c $mib_module -c public $ip outputVoltage";
+	@volt_response = send_cmd($cmd);
+
+	$cmd = "snmpwalk -OqU -v 2c $mib_module -c public $ip outputCurrent";
+	@amp_response = send_cmd($cmd);
+
+	$cmd = "snmpwalk -OqU -v 2c $mib_module -c public $ip outputMeasurementSenseVoltage";
+	@svolt_response = send_cmd($cmd);
+
+	$cmd = "snmpwalk -OqU -v 2c $mib_module -c public $ip outputMeasurementCurrent";
+	@samp_response = send_cmd($cmd);
+
+	$cmd = "snmpwalk -OqU -v 2c $mib_module -c public $ip outputSwitch";
+	@switch_response = send_cmd($cmd);
+
+	$cmd = "snmpwalk -v 2c $mib_module -c public $ip outputStatus";
+	@stat_response = send_cmd($cmd);
+	
+	for ($ii = 0; $ii < $cnt; $ii++)  
+	{
+	    $j=0;
+	    while($j < @volt_response)
+	    {
+       	      @volt_list = split(/\s+/, $volt_response[$j]);
+	      if($volt_list[0] eq "WIENER-CRATE-MIB::outputVoltage.$chan[$ii]")
+	      {
+	          $volt = $volt_list[1];
+		  last;
+	      }
+	      $j++;
+	    }
+
+	    $j=0;
+	    while($j<@amp_response)
+	    {
+	      @amp_list = split(/\s+/, $amp_response[$j]);
+	      if($amp_list[0] eq "WIENER-CRATE-MIB::outputCurrent.$chan[$ii]")
+	      {
+	          $amp = $amp_list[1];
+		  last;
+	      }
+	      $j++;
+	    }
+
+	    $j=0;
+	    while($j<@svolt_response)
+	    {
+	      @svolt_list = split(/\s+/, $svolt_response[$j]);
+	      if($svolt_list[0] eq "WIENER-CRATE-MIB::outputMeasurementSenseVoltage.$chan[$ii]")
+	      {
+	          $svolt = $svolt_list[1];
+		  last;
+	      }
+	      $j++;
+	    }
+
+	    $j=0;
+	    $adjust_chan = substr($chan[$ii],1);
+	    $adjust_chan = $adjust_chan + 1;
+	    while($j<@samp_response)
+	    {
+	      @samp_list = split(/\s+/, $samp_response[$j]);
+#	      if($samp_list[0] == $adjust_chan)
+	      if($samp_list[0] eq "WIENER-CRATE-MIB::outputMeasurementCurrent.$chan[$ii]")
+	      {
+	          $samp = $samp_list[1];
+		  last;
+	      }
+	      $j++;
+	    }
+
+	    $j=0;
+	    while($j<@switch_response)
+	    {
+	      @switch_list = split(/\s+/, $switch_response[$j]);
+	      if($switch_list[0] eq "WIENER-CRATE-MIB::outputSwitch.$chan[$ii]")
+	      {
+	          $switch = $switch_list[1];
+		  last;
+	      }
+	      $j++;
+	    }
+
+	    $j=0;
+	    while($j<@stat_response)
+	    {
+	      @stat_list = split(/\s+/, $stat_response[$j]);
+	      if($stat_list[0] eq "WIENER-CRATE-MIB::outputStatus.$chan[$ii]")
+	      {
+		  if ($stat_response[$j] =~ /outputFailureMaxCurrent/)
+		  {
+		      $stat = "Trip";
+		  }
+ 		  elsif ($stat_response[$j] =~ /outputEmergencyOff/) 
+		  {
+		      $stat = "Dis";
+		  } 
+		  elsif ($stat_response[$j] =~ /outputInhibit/) 
+		  {
+		      $stat = "Inhibited";
+		  } 
+		  else
+		  {
+		      $stat = "Ok";
+		  }
+		  last;
+	      }
+	      $j++;
+	    }
+
+	    if ($detailed == 1) 
+	    {
+		printf "%s: %3.2f V %7.6f A  %3.2f V %10.9f A %s %s\n", $dchannel[$ii], $volt, $amp, $svolt, $samp, $switch, $stat;
+	    }
+	    else
+	    {
+		printf "%s %3.2f %7.6f %3.2f %10.9f %s %s\n", $dchannel[$ii], $volt, $amp, $svolt, $samp, $switch, $stat;
+	    }
+	}
+    }
+    return;
+}
+sub channel_on_off {
+    my ($cnt, $ii, $id);
+    $cmd = "snmpget -Oqv -v 2c $mib_module -c public  $ip sysMainSwitch.0";
+    $mfresponse = qx "$cmd";
+    chomp $mfresponse;
+    if ($mfresponse ne "on") 
+    {
+	print "Mainframe is off or there is no connection to the mainframe.\n";
+	return;
+    }
+
+    $id = $_[1];
+    if ($id ne "all") 
+    {
+	$cnt = 1;
+	for ($ii = 0; $ii < $channel_count; $ii++)
+        {
+            if ($id eq $det_chan[$ii])
+            {
+                $chan[0] = $chan_ID[$ii];
+            }
+        }
+	$cmd = "snmpget -OqvU -v 2c $mib_module -c guru $ip outputVoltageRiseRate.$chan[0]";
+	$response = qx "$cmd";
+	chomp $response;
+	@rampupspeed = split (/ /, $response);
+	if ($rampupspeed[0] > 5.0) 
+	{
+	    print "Mainframe initialization has not been done. Run 'hvcontrol_VTXPXL init'\n";
+	    return;
+	}
+	$cmd = "snmpget -v 2c $mib_module -c guru $ip outputStatus.$chan[0]";
+	$response = qx "$cmd";
+	chomp $response;
+	if ($response =~ /outputInhibit/) 
+	{ 
+	    print "Output inhibited, check cooling system\n";
+	}
+
+	$cmd = "snmpset -Oqv -v 2c $mib_module -c guru $ip outputSwitch.$chan[0] i $_[0]";
+	$response = qx "$cmd";
+    } 
+    else 
+    {
+	$cmd = "snmpget -OqvU -v 2c $mib_module -c guru $ip outputVoltageRiseRate.$chan_ID[0]";
+	$response = qx "$cmd";
+	chomp $response;
+	@rampupspeed = split (/ /, $response);
+	if ($rampupspeed[0] > 5.0) 
+	{
+	    print "Mainframe initialization has not been done. Run 'hvcontrol_sPHENIX init'\n";
+	    return;
+	}
+
+	$cmd = "snmpset -v 2c $mpath $mib_module -c guru $ip groupsSwitch.0 i $_[0]";
+#        print "$cmd\n";
+	$response = qx "$cmd";
+#	print "$response";
+    }
+
+    return;
+}
+
+sub channel_voltage_get_set { 
+    my ($cnt, $ii, $id, $value);
+    $cmd = "snmpget -Oqv -v 2c $mib_module -c public  $ip sysMainSwitch.0";
+    $mfresponse = qx "$cmd";
+    chomp $mfresponse;
+    if ($mfresponse ne "on") 
+    {
+	print "Mainframe is off or there is no connection to the mainframe.\n";
+	exit;
+    }
+
+    $id = $_[0];
+    $value = $_[1];
+    if ($id ne "all") 
+    {
+	$cnt = 1;
+	for ($ii = 0; $ii < $channel_count; $ii++)
+        {
+            if ($id eq $det_chan[$ii])
+            {
+                $chan[0] = $chan_ID[$ii];
+                $dchannel[0] = $det_chan[$ii];
+            }
+        }
+    } 
+    else 
+    {
+	$cnt = $channel_count;
+	for ($ii = 0; $ii < $cnt; $ii++) 
+	{ 
+	    $chan[$ii] = $chan_ID[$ii];
+	    $dchannel[$ii] = $det_chan[$ii];
+	}
+    }
+
+    for ($ii = 0; $ii < $cnt; $ii++)  
+    {
+	if ($value eq "read") 
+	{ 
+	    $cmd = 
+		"snmpget -v 2c $mib_module -c guru $ip outputVoltage.$chan[$ii]";
+	    $response = qx "$cmd";
+	    chomp $response;
+	    @svolt = split (/ /, $response);
+	    $cmd = 
+		"snmpget -v 2c $mib_module -c guru $ip outputMeasurementSenseVoltage.$chan[$ii]";
+	    $response = qx "$cmd";
+	    chomp $response;
+	    @rvolt = split (/ /, $response);
+	    print "Channel $dchannel[$ii] read back (set and measured voltage): $svolt[4] V $rvolt[4] V\n";
+	} 
+	else 
+	{ 
+	    $cmd = "snmpset -v 2c $mib_module -c guru $ip outputVoltage.$chan[$ii] F $value";
+
+	    $response = qx "$cmd";
+	    chomp $response;
+	    @svolt = split (/ /, $response);
+	    print "Channel $dchannel[$ii] set voltage $svolt[4] V\n";
+	}
+    }
+    return;
+}
+
+sub channel_voltageRiseRate_get_set { 
+    my ($cnt, $ii, $id, $value);
+    $cmd = "snmpget -Oqv -v 2c $mib_module -c public  $ip sysMainSwitch.0";
+    $mfresponse = qx "$cmd";
+    chomp $mfresponse;
+    if ($mfresponse ne "on") 
+    {
+	print "Mainframe is off or there is no connection to the mainframe.\n";
+	exit;
+    }
+
+    $id = $_[0];
+    $value = $_[1];
+    if ($id ne "all") 
+    {
+	$cnt = 1;
+	for ($ii = 0; $ii < $channel_count; $ii++)
+        {
+            if ($id eq $det_chan[$ii])
+            {
+                $chan[0] = $chan_ID[$ii];
+                $dchannel[0] = $det_chan[$ii];
+            }
+        }
+    } 
+    else 
+    {
+	$cnt = $channel_count;
+	for ($ii = 0; $ii < $cnt; $ii++) 
+	{ 
+	    $chan[$ii] = $chan_ID[$ii];
+	    $dchannel[$ii] = $det_chan[$ii];
+	}
+    }
+
+    for ($ii = 0; $ii < $cnt; $ii++)  
+    {
+	if ($value eq "read") 
+	{ 
+	    $cmd = "snmpget -OqvU -v 2c $mib_module -c guru $ip outputVoltageRiseRate.$chan[$ii]";
+	    $response = qx "$cmd";
+	    chomp $response;
+	    @rampupspeed = split (/ /, $response);
+#	    print "Channel $dchannel[$ii] read back voltage rise rate: $rampupspeed[0] V/s\n";
+	} 
+	else 
+	{ 
+	    $cmd = "snmpset -OqvU -v 2c $mib_module -c guru $ip outputVoltageRiseRate.$chan[$ii] F $value";
+#            print "$cmd\n";
+	    $response = qx "$cmd";
+	    chomp $response;
+	    @rampupspeed = split (/ /, $response);
+#	    print "Channel $dchannel[$ii] set voltage rise rate $rampupspeed[0] V/s\n";
+	}
+    }
+    return;
+}
+
+sub channel_voltageFallRate_get_set { 
+    my ($cnt, $ii, $id, $value);
+    $cmd = "snmpget -Oqv -v 2c $mib_module -c public  $ip sysMainSwitch.0";
+    $mfresponse = qx "$cmd";
+    chomp $mfresponse;
+    if ($mfresponse ne "on") 
+    {
+	print "Mainframe is off or there is no connection to the mainframe.\n";
+	exit;
+    }
+
+    $id = $_[0];
+    $value = $_[1];
+    if ($id ne "all") 
+    {
+	$cnt = 1;
+	for ($ii = 0; $ii < $channel_count; $ii++)
+        {
+            if ($id eq $det_chan[$ii])
+            {
+                $chan[0] = $chan_ID[$ii];
+                $dchannel[0] = $det_chan[$ii];
+            }
+        }
+    } 
+    else 
+    {
+	$cnt = $channel_count;
+	for ($ii = 0; $ii < $cnt; $ii++) 
+	{ 
+	    $chan[$ii] = $chan_ID[$ii];
+	    $dchannel[$ii] = $det_chan[$ii];
+	}
+    }
+
+    for ($ii = 0; $ii < $cnt; $ii++)  
+    {
+	if ($value eq "read") 
+	{ 
+	    $cmd = "snmpget -OqvU -v 2c $mib_module -c guru $ip outputVoltageFallRate.$chan[$ii]";
+	    $response = qx "$cmd";
+	    chomp $response;
+	    @rampdownspeed = split (/ /, $response);
+#	    print "Channel $dchannel[$ii] read back voltage fall rate: $rampdownspeed[0] V/s\n";
+	} 
+	else 
+	{ 
+	    $cmd = "snmpset -OqvU -v 2c $mib_module -c guru $ip outputVoltageFallRate.$chan[$ii] F $value";
+	    $response = qx "$cmd";
+	    chomp $response;
+	    @rampdownspeed = split (/ /, $response);
+#	    print "Channel $dchannel[$ii] set voltage fall rate $rampdownspeed[0] V/s\n";
+	}
+    }
+    return;
+}
+
+sub channel_current_get_set {
+    my ($cnt, $ii, $id, $value, $response, $adjust_chan);
+    $cmd = "snmpget -Oqv -v 2c $mib_module -c public  $ip sysMainSwitch.0";
+    $mfresponse = qx "$cmd";
+    chomp $mfresponse;
+    if ($mfresponse ne "on") 
+    {
+	print "Mainframe is off or there is no connection to the mainframe.\n";
+	exit;
+    }
+
+    $id = $_[0];
+    $value = $_[1];
+    if ($id ne "all") 
+    {
+	$cnt = 1;
+	for ($ii = 0; $ii < $channel_count; $ii++)
+        {
+            if ($id eq $det_chan[$ii])
+            {
+                $chan[0] = $chan_ID[$ii];
+                $dchannel[0] = $det_chan[$ii];
+            }
+        }
+    } 
+    else 
+    {
+	$cnt = $channel_count;
+	for ($ii = 0; $ii < $cnt; $ii++) 
+	{ 
+	    $chan[$ii] = $chan_ID[$ii];
+	    $dchannel[$ii] = $det_chan[$ii];
+	}
+    }
+
+    for ($ii = 0; $ii < $cnt; $ii++)  
+    {
+	if ($value eq "read") 
+	{ 
+	    $cmd = "snmpget -v 2c $mib_module -c guru $ip outputCurrent.$chan[$ii]";
+	    $response = qx "$cmd";
+	    chomp $response;
+	    @samp = split (/ /, $response);
+
+	    @measamp = split (/\s+/, $response);
+	    print "Channel $dchannel[$ii] read back (set and measured current): $samp[4] A $measamp[1] A\n";
+	} 
+	else 
+	{ 
+	    $cmd = "snmpset -v 2c $mib_module -c guru $ip outputCurrent.$chan[$ii] F $value";
+	    $response = qx "$cmd";
+	    chomp $response;
+	    @samp = split (/ /, $response);
+	    print "Channel $dchannel[$ii] set current: $samp[4] A\n";
+	}
+    }
+    return;
+}
+
+sub trip_behavior {
+
+    my ($cnt, $ii, $id, $failure_value, $trip_time);
+
+    $cmd = "snmpget -Oqv -v 2c $mib_module -c public  $ip sysMainSwitch.0";
+    $mfresponse = qx "$cmd";
+    chomp $mfresponse;
+
+    if ($mfresponse ne "on") 
+    {
+	print "Mainframe is off or there is no connection to the mainframe.\n";
+	exit;
+    }
+
+    $id = $_[0];
+    $failure_value = $_[1];
+    $trip_time = $_[2];
+
+    if ($id ne "all") 
+    {
+	$cnt = 1;
+	for ($ii = 0; $ii < $channel_count; $ii++)
+        {
+            if ($id eq $det_chan[$ii])
+            {
+                $chan[0] = $chan_ID[$ii];
+                $dchannel[0] = $det_chan[$ii];
+            }
+        }
+    } 
+    else 
+    {
+	$cnt = $channel_count;
+	for ($ii = 0; $ii < $cnt; $ii++) 
+	{ 
+	    $chan[$ii] = $chan_ID[$ii];
+	    $dchannel[$ii] = $det_chan[$ii];
+	}
+    }
+
+    for ($ii = 0; $ii < $cnt; $ii++)  
+    {
+	if ($failure_value eq "read") 
+	{
+	    $cmd = "snmpget -v 2c $mib_module -c guru $ip outputSupervisionBehavior.$chan[$ii]";
+	    $mfresponse = qx "$cmd";
+	    $cmd = "snmpget -v 2c $mib_module -c guru $ip outputTripTimeMaxCurrent.$chan[$ii]";
+	    $mfresponse = qx "$cmd";
+	}
+	else
+	{
+	    $cmd = "snmpset -v 2c $mib_module -c guru $ip outputSupervisionBehavior.$chan[$ii] i $failure_value";
+#            print "$cmd\n";
+#	    $mfresponse = system($cmd);
+
+#	    $cmd = "snmpset -v 2c $mib_module -c guru $ip outputTripTimeMaxCurrent.$chan[$ii] i $trip_time";
+#            print "$cmd\n";
+#	    $mfresponse = system($cmd);
+
+#enable external inhibit
+#		$cmd = "snmpset -v 2c $mib_module -c guru $ip outputUserConfig.$chan[$ii] i 24";
+#disable external inhibit
+		$cmd = "snmpset -v 2c $mib_module -c guru $ip outputUserConfig.$chan[$ii] i 8";
+		$mfresponse = system($cmd);
+	}
+    }
+    return;
+}
+
+sub clear_failure {
+    my ($cnt, $ii, $id);
+    $cmd = "snmpget -Oqv -v 2c $mib_module -c public  $ip sysMainSwitch.0";
+    $mfresponse = qx "$cmd";
+    chomp $mfresponse;
+    if ($mfresponse ne "on") 
+    {
+	print "Mainframe is off or there is no connection to the mainframe.\n";
+	exit;
+    }
+
+    $id = $_[0];
+    if ($id ne "all") 
+    {
+	$cnt = 1;
+	for ($ii = 0; $ii < $channel_count; $ii++)
+        {
+            if ($id eq $det_chan[$ii])
+            {
+                $chan[0] = $chan_ID[$ii];
+                $dchannel[0] = $det_chan[$ii];
+            }
+        }
+    } 
+    else 
+    {
+	$cnt = $channel_count;
+	for ($ii = 0; $ii < $cnt; $ii++) 
+	{ 
+	    $chan[$ii] = $chan_ID[$ii];
+	    $dchannel[$ii] = $det_chan[$ii];
+	}
+    }
+
+    for ($ii = 0; $ii < $cnt; $ii++)  
+    {
+	$cmd = "snmpset -v 2c $mib_module -c guru $ip outputSwitch.$chan[$ii] i 10";
+	system($cmd);
+    }
+    return;
+}
+
+sub set_disable {
+    my ($cnt, $ii, $id);
+    $cmd = "snmpget -Oqv -v 2c $mib_module -c public  $ip sysMainSwitch.0";
+    $mfresponse = qx "$cmd";
+    chomp $mfresponse;
+    if ($mfresponse ne "on") 
+    {
+	print "Mainframe is off or there is no connection to the mainframe.\n";
+	exit;
+    }
+
+    $id = $_[0];
+    if ($id ne "all") 
+    {
+	$cnt = 1;
+	for ($ii = 0; $ii < $channel_count; $ii++)
+        {
+            if ($id eq $det_chan[$ii])
+            {
+                $chan[0] = $chan_ID[$ii];
+                $dchannel[0] = $det_chan[$ii];
+            }
+        }
+    } 
+    else 
+    {
+	$cnt = $channel_count;
+	for ($ii = 0; $ii < $cnt; $ii++) 
+	{ 
+	    $chan[$ii] = $chan_ID[$ii];
+	    $dchannel[$ii] = $det_chan[$ii];
+	}
+    }
+
+    for ($ii = 0; $ii < $cnt; $ii++)  
+    {
+	$cmd = "snmpset -v 2c $mib_module -c guru $ip outputSwitch.$chan[$ii] i 2";
+	system($cmd);
+	$cmd = "snmpset -v 2c $mib_module -c guru $ip outputSwitch.$chan[$ii] i 3";
+	system($cmd);
+
+    }
+    return;
+}
+
+sub operating { 
+    channel_on_off(1, "all");
+    return;
+}
+
+sub disable_hv { 
+    channel_on_off(0, "all");
+    return;
+}
+
+sub status { 
+    $switch = `snmpget -OqvU -v 2c $mib_module -c public $ip outputSwitch.u0`;
+    print "$switch";
+    return;
+}
+
+sub recovery {
+    my ($cnt, $ii, $id, $counter);
+
+    $cmd = "snmpget -Oqv -v 2c $mib_module -c public  $ip sysMainSwitch.0";
+
+    $mfresponse = qx "$cmd";
+    chomp $mfresponse;
+    if ($mfresponse ne "on") 
+    {
+	print "Mainframe is off or there is no connection to the mainframe.\n";
+	exit;
+    }
+
+    $id = $_[0];
+    $counter = 0;
+    if ($id ne "all") 
+    {
+	$cnt = 1;
+	for ($ii = 0; $ii < $channel_count; $ii++)  
+	{
+	    if ($id eq $det_chan[$ii])
+	    {
+		$chan[0] = $chan_ID[$ii];
+		$dchannel[0] = $det_chan[$ii];
+	    }
+	}
+
+	$outputstat = `snmpget -v 2c $mib_module -c public $ip outputStatus.$chan[0]`;
+	if ($outputstat =~ /outputFailureMaxCurrent/)
+	{
+	    $counter++;
+	    clear_failure($dchannel[0]);
+	    channel_on_off(1, $dchannel[0]);
+	}
+
+	print "$dchannel[0] has been recovered\n";
+    } 
+    else 
+    {
+	$cnt = $channel_count;
+	for ($ii = 0; $ii < $cnt; $ii++) 
+	{ 
+	    $chan[$ii] = $chan_ID[$ii];
+	    $dchannel[$ii] = $det_chan[$ii];
+	}
+
+	$cmd = `snmpwalk -v 2c $mib_module -c public $ip outputStatus`;
+	@stat_response = send_cmd($cmd);
+	
+	for ($ii = 0; $ii < $cnt; $ii++)  
+	{
+	    $j=0;
+	    while($j<@stat_response)
+	    {
+	      @stat_list = split(/\s+/, $stat_response[$j]);
+#	      print "recovery: $stat_response[$j]\n";
+	      if($stat_list[0] eq "WIENER-CRATE-MIB::outputStatus.$chan[$ii]")
+	      {
+		  if ($stat_response[$j] =~ /outputFailureMaxCurrent/)
+		  {
+		      $counter++;
+		      clear_failure($dchannel[$ii]);
+		      channel_on_off(1, $dchannel[$ii]);
+		  }
+		  last;
+	      }
+	      $j++;
+	    }
+	}
+	print "$counter channel(s) have been recovered\n";
+    }
+    return;
+}
+
+sub interlock { 
+
+    my $cmd = "snmpwalk -v 2c $mpath $mib_module -c public  $ip sysMainSwitch.0";
+    send_cmd($cmd);
+
+    $cmd = "snmpset -v 2c $mpath $mib_module -c guru $ip groupsSwitch.64 i 10";
+    send_cmd($cmd);
+
+    $cmd = "snmpwalk -v 2c $mpath $mib_module -c public  $ip sysMainSwitch.0";
+    send_cmd($cmd);
+
+    return ;
+
+}
+
+sub test_ejm {
+
+    $cmd = "snmpwalk -v 2c $mib_module -c public $ip";
+    print "\n$cmd\n";
+    system ($cmd);
+
+    $cmd = "snmpwalk -v 2c $mib_module -c public $ip crate";
+    print "\n$cmd\n";
+    system ($cmd);
+
+#    $cmd = "snmpget -v 2c $mib_module -c guru $ip moduleStatus.ma0";
+#    print "\n$cmd\n";
+#    system ($cmd);
+
+#    $cmd = "snmpget -v 2c $mib_module -c guru $ip outputUserConfig.u0";
+#    print "\n$cmd\n";
+#    system ($cmd);
+
+
+#    $cmd = "snmpget -v 2c $mib_module -c public $ip outputStatus.u1";
+#    print "\n$cmd\n";
+#    system ($cmd);
+
+#    $cmd = "snmpget -v 2c $mib_module -c guru $ip outputSupervisionBehavior.u1";
+#    print "\n$cmd\n";
+#    system ($cmd);
+
+#    $cmd = "snmpget -v 2c $mib_module -c guru $ip outputVoltage.u1";
+#    print "\n$cmd\n";
+#    system ($cmd);
+
+#    $cmd = "snmpget -v 2c $mib_module -c guru $ip outputCurrent.u1";
+#    print "\n$cmd\n";
+#    system ($cmd);
+
+#    $cmd = "snmpget -v 2c $mib_module -c public $ip outputMeasurementSenseVoltage.u1";
+#    print "\n$cmd\n";
+#    system ($cmd);
+
+#    $cmd = "snmpget -v 2c $mib_module -c public $ip outputMeasurementCurrent.u1";
+#    print "\n$cmd\n";
+#    system ($cmd);
+
+#    $cmd = "snmpget -v 2c $mib_module -c guru $ip outputUserConfig.u1";
+#    print "\n$cmd\n";
+#    system ($cmd);
+
+#    $cmd = "snmpget -v 2c $mib_module -c guru $ip moduleStatus.ma0";
+#    print "\n$cmd\n";
+#    system ($cmd);
+
+}

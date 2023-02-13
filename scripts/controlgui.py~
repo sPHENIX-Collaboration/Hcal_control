@@ -1,0 +1,36 @@
+# Script to run gui to control sPHENIX hadronic calorimeters
+# Dan Richford (Baruch/CUNY, 2022-12-12-M)
+# Python Version (queried on opc0.rhic.bnl.gov on 2022-12-12):
+#   phnxrc@opc0:~/drichf1/scripts$ python -V
+#   Python 2.7.16
+#
+from TKinter import *
+import os
+import sys
+
+# list of button names and their associated shell commands
+
+hcalcommands = [
+    ["GET TEMPS","python /home/phnxrc/drichf1/control/hcaltemp_all.py"]
+    ] # close array of hcal commands
+
+class App:
+
+    def __init__(self, master):
+
+        frame = Frame(master)
+        frame.pack()
+
+        homedir = os.getenv('HOME','/')
+        # logo_image = homedir + "/drichf1/sphenix-logo-white-bg.gif"
+        # print logo_image
+
+        try:
+            f = open( logo_image )
+            f.close()
+            logo = PhotoImage(file=logo_image)
+            self.lbl = Label( frame, image=logo, text="sPHENIX" )
+            self.lbl.logo = logo
+        except IOError:
+            print 'error opening logo: ', logo_image, ' ... ignoring'
+

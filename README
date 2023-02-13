@@ -1,0 +1,212 @@
+phnxrc@opc0:~/drichf1/
+Dan Richford (Baruch/CUNY)
+
++------------------------------------------------+
+| Directory for scripts to run the sPHENIX HCals |
++------------------------------------------------+
+1. Low voltage: hcallv/
+2. High voltage: mpod/
+3. Python control of High voltage: pympod/
+4. Sector control: control/
+5. Scripts and GUIs: scripts/
+
++----------------------------------+
+| Tel-Net Addresses for HCal Racks |
++----------------------------------+
+1. 3B4 (Power Distribution Rack)
+122 -- Low-Voltage Controller Board Collection
+128 -- High-Voltage MPOD Server
+
+2. 2E2 (East Control/Pulse/Signal Rack)*
+111 -- OHCal Pulser
+110 -- IHCal Pulser
+
+80 -- First Slow-Control Board (8 ch.)
+81 -- Second Slow-Control Board (8 ch.)
+82 -- Third Slow-Control Board (8 ch.)
+83 -- Fourth Slow-Control Board (8 ch.)
+84 -- Fifth Slow-Control Board (8 ch.)
+85 -- Sixth Slow-Control Board (8 ch.)
+86 -- Seventh Slow-Control Board (8 ch.)
+87 -- Eighth Slow-Control Board (8 ch.)
+
+* Each board has two channels serving the north and south halves of the sectors
+
+3. 2W2 (West Control/Pulse/Signal Rack)**
+113 -- OHCal pulser
+112 -- IHCal pulser
+
+90 -- First Slow-Control Board (8 ch.)
+91 -- Second Slow-Control Board (8 ch.)
+92 -- Third Slow-Control Board (8 ch.)
+93 -- Fourth Slow-Control Board (8 ch.)
+94 -- Fifth Slow-Control Board (8 ch.)
+95 -- Sixth Slow-Control Board (8 ch.)
+96 -- Seventh Slow-Control Board (8 ch.)
+97 -- Eighth Slow-Control Board (8 ch.)
+
+** Each board has two channels serving the north and south halves of the sectors (ex.: Ch-0 = HCal-0-S, Ch-1 = HCal-0-N)
+
++------------------------+
+| Channeling Information |
++------------------------+
+ +---------+
+ | 1. MPOD |
+ +---------+
+
+The MPOD reads a text file to power the sectors, and it considers the IHCal and OHCal together. Therefore:
+
+HCal-0  = OHCal Sector  0 (Assembly Sector Number O16)
+HCal-1  = OHCal Sector  1 (Assembly Sector Number O18)
+HCal-2  = OHCal Sector  2 (Assembly Sector Number O20)
+HCal-3  = OHCal Sector  3 (Assembly Sector Number O22)
+HCal-4  = OHCal Sector  4 (Assembly Sector Number O24)
+HCal-5  = OHCal Sector  5 (Assembly Sector Number O26)
+HCal-6  = OHCal Sector  6 (Assembly Sector Number O28)
+HCal-7  = OHCal Sector  7 (Assembly Sector Number O30-CH[imney])
+HCal-8  = OHCal Sector  8 (Assembly Sector Number O32-CH[imney])
+HCal-9  = OHCal Sector  9 (Assembly Sector Number O31-CH[imney])
+HCal-10 = OHCal Sector 10 (Assembly Sector Number O29)
+HCal-11 = OHCal Sector 11 (Assembly Sector Number O27)
+HCal-12 = OHCal Sector 12 (Assembly Sector Number O25)
+HCal-13 = OHCal Sector 13 (Assembly Sector Number O23)
+HCal-14 = OHCal Sector 14 (Assembly Sector Number O21)
+HCal-15 = OHCal Sector 15 (Assembly Sector Number O19)
+HCal-16 = OHCal Sector 16 (Assembly Sector Number O17)
+HCal-17 = OHCal Sector 17 (Assembly Sector Number O15)
+HCal-18 = OHCal Sector 18 (Assembly Sector Number O13)
+HCal-19 = OHCal Sector 19 (Assembly Sector Number O11)
+HCal-20 = OHCal Sector 20 (Assembly Sector Number O9)
+HCal-21 = OHCal Sector 21 (Assembly Sector Number O7)
+HCal-22 = OHCal Sector 22 (Assembly Sector Number O5)
+HCal-23 = OHCal Sector 23 (Assembly Sector Number O3)
+HCal-24 = OHCal Sector 24 (Assembly Sector Number O2)
+HCal-25 = OHCal Sector 25 (Assembly Sector Number O1)
+HCal-26 = OHCal Sector 26 (Assembly Sector Number O4)
+HCal-27 = OHCal Sector 27 (Assembly Sector Number O6)
+HCal-28 = OHCal Sector 28 (Assembly Sector Number O8)
+HCal-29 = OHCal Sector 29 (Assembly Sector Number O10)
+HCal-30 = OHCal Sector 30 (Assembly Sector Number O12)
+HCal-31 = OHCal Sector 31 (Assembly Sector Number O14)
+HCal-32 = IHCal Sector  0 (Assembly Sector Number I1)
+HCal-33 = IHCal Sector  1 (Assembly Sector Number I2)
+HCal-34 = IHCal Sector  2 (Assembly Sector Number I4)
+HCal-35 = IHCal Sector  3 (Assembly Sector Number I3)
+HCal-36 = IHCal Sector  4 (Assembly Sector Number I5)
+HCal-37 = IHCal Sector  5 (Assembly Sector Number I6)
+HCal-38 = IHCal Sector  6 (Assembly Sector Number I7)
+HCal-39 = IHCal Sector  7 (Assembly Sector Number I8)
+HCal-40 = IHCal Sector  8 (Assembly Sector Number I9)
+HCal-41 = IHCal Sector  9 (Assembly Sector Number I10)
+HCal-42 = IHCal Sector 10 (Assembly Sector Number I11)
+HCal-43 = IHCal Sector 11 (Assembly Sector Number I12)
+HCal-44 = IHCal Sector 12 (Assembly Sector Number I13)
+HCal-45 = IHCal Sector 13 (Assembly Sector Number I14)
+HCal-46 = IHCal Sector 14 (Assembly Sector Number I15)
+HCal-47 = IHCal Sector 15 (Assembly Sector Number I16)
+HCal-48 = IHCal Sector 16 (Assembly Sector Number I17)
+HCal-49 = IHCal Sector 17 (Assembly Sector Number I18)
+HCal-50 = IHCal Sector 18 (Assembly Sector Number I19)
+HCal-51 = IHCal Sector 19 (Assembly Sector Number I20)
+HCal-52 = IHCal Sector 20 (Assembly Sector Number I21)
+HCal-53 = IHCal Sector 21 (Assembly Sector Number I22)
+HCal-54 = IHCal Sector 22 (Assembly Sector Number I23)
+HCal-55 = IHCal Sector 23 (Assembly Sector Number I24)
+HCal-56 = IHCal Sector 24 (Assembly Sector Number I25)
+HCal-57 = IHCal Sector 25 (Assembly Sector Number I26)
+HCal-58 = IHCal Sector 26 (Assembly Sector Number I27)
+HCal-59 = IHCal Sector 27 (Assembly Sector Number I28)
+HCal-60 = IHCal Sector 28 (Assembly Sector Number I29)
+HCal-61 = IHCal Sector 29 (Assembly Sector Number I30)
+HCal-62 = IHCal Sector 30 (Assembly Sector Number I31)
+HCal-63 = IHCal Sector 31 (Assembly Sector Number I32)
+
+ +----------------+
+ | 2. Low-Voltage |
+ +----------------+
+The control boards count their channels using an index-number string:
+
+SSCC
+
+where ``SS'' is the board number, and ``CC'' is the channel number on each board. So, ``0801'' is the first channel on the eighth board.
+
+The channel numbers are bit masks serving as index numbers for combinations of channels.
+
+00 -- all channels off
+01 -- Ch. 1
+02 -- Ch. 2
+03 -- Chs. 1, 2
+04 -- Ch. 3
+05 -- Chs. 1, 3
+06 -- Chs. 2, 3
+07 -- Chs. 1, 2, 3
+08 -- Ch. 4
+09 -- Chs. 1, 4
+10 -- Chs. 2, 4
+11 -- Chs. 3, 4
+12 -- Chs. 1, 2, 4
+13 -- Chs. 1, 3, 4
+14 -- Chs. 2, 3, 4
+15 -- Chs. 1, 2, 3, 4
+16 -- Ch. 5
+... and so forth
+
+The HCals are split in north and south for this channeling. Namely,
+
+0101 = HCal-0-N = OHCal Sector 0 North (Assembly Sector Number O16-N)
+0102 = HCal-0-S = OHCal Sector 0 South (Assembly Sector Number O16-S)
+0104 = HCal-1-N = OHCal Sector 1 North (Assembly Sector Number O18-N)
+0108 = HCal-1-S = OHCal Sector 1 South (Assembly Sector Number O18-S)
+0110 = HCal-2-N = OHCal Sector 2 North (Assembly Sector Number O20-N)
+0120 = HCal-2-S = OHCal Sector 2 South (Assembly Sector Number O20-S)
+0140 = HCal-3-N = OHCal Sector 3 North (Assembly Sector Number O22-N)
+0180 = HCal-3-S = OHCal Sector 3 South (Assembly Sector Number O22-S)
+0201 = HCal-4-N = OHCal Sector 4 North (Assembly Sector Number O24-N)
+0202 = HCal-4-S = OHCal Sector 4 South (Assembly Sector Number O24-S)
+0204 = HCal-5-N = OHCal Sector 5 North (Assembly Sector Number O26-N)
+0208 = HCal-5-S = OHCal Sector 5 South (Assembly Sector Number O26-S)
+0210 = HCal-6-N = OHCal Sector 6 North (Assembly Sector Number O28-N)
+0220 = HCal-6-S = OHCal Sector 6 South (Assembly Sector Number O28-S)
+0240 = HCal-7-N = OHCal Sector 7 North (Assembly Sector Number O30-N)
+0280 = HCal-7-S = OHCal Sector 7 South (Assembly Sector Number O30-S)
+... and so forth ...
+0840 = HCal-31-N = OHCal Sector 31 North (Assembly Sector Number O14-N)
+0880 = HCal-32-S = OHCal Sector 31 South (Assembly Sector Number O14-S)
+0901 = HCal-33-N = IHCal Sector 0 North (Assembly Sector Number I0-N)
+0902 = HCal-33-S = IHCal Sector 0 South (Assembly Sector Number I0-S)
+0904 = HCal-34-N = IHCal Sector 1 North (Assembly Sector Number I1-N
+)
+0908 = HCal-34-S = IHCal Sector 1 South (Assembly Sector Number I1-S)
+0910 = HCal-35-N = IHCal Sector 2 North (Assembly Sector Number I4-N)
+0920 = HCal-35-S = IHCal Sector 2 South (Assembly Sector Number I4-S)
+0940 = HCal-36-N = IHCal Sector 3 North (Assembly Sector Number I3-N)
+0980 = HCal-36-S = IHCal Sector 3 South (Assembly Sector Number I3-S)
+1001 = HCal-37-N = IHCal Sector 4 North (Assembly Sector Number I5-N)
+1002 = HCal-37-S = IHCal Sector 4 South (Assembly Sector Number I5-S)
+... and so forth ...
+1640 = HCal-63-N = IHCal Sector 31 North (Assembly Sector Number I32-N)
+1680 = HCal-63-S = IHCal Sector 31 South (Assembly Sector Number I32-S)
+
+ +-----------------+
+ | 3. Slow-Control |
+ +-----------------+
+
+Each board has its own IP address (see above), and each board has 8 channels.
+
+During the assembly phase in Bldg 912, we only had one board with a pair of control connections, so ``0'' was south and ``1'' was north. The EMCal will be using even numbers for north channels and odd for south, so the HCal will follow that convention, as well.
+
+10.20.34.80 --
+00 = OHCal 8 North
+01 = OHCal 8 South
+02 = OHCal 9 North
+03 = OHCal 9 South
+04 = OHCal 10 North
+05 = OHCal 10 South
+06 = OHCal 11 North
+07 = OHCal 11 South
+
+10.20.34.81 --
+00 = OHCal 12
+01
+02 = OHCal 13
+03

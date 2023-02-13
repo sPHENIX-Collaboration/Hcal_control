@@ -1,0 +1,84 @@
+This folder (/home/phnxrc/drichf1/mpod/) is a prototype folder for controling the sPHENIX Hadronic Calorimeters' high-voltages system.
+
+Generally speaking, the contents of this folder are Perl scripts that use snmp-get to control a set of Wiener MPOD (OMPV.8120) supplies.
+
+Telnet: 10.20.34.148:9760
+
+Make sure the lowest setting for the high-voltage is ~5V (somewhere between 2V, which is not stably supplied, and 7V, which is).
+
+Folder contents (as of Tuesday/1/24/2023):
+
+total 182K
+drwxr-xr-x 5 phnxrc sphenix3   12 Jan 19 13:03 .
+drwxr-xr-x 8 phnxrc sphenix3   12 Jan 12 09:45 ..
+drwxr-xr-x 2 phnxrc sphenix3    9 Jan 13 10:41 backup
+-rw-r--r-- 1 phnxrc sphenix3    1 Jan 13 11:30 DisableChannels.txt
+-rwxr-xr-x 1 phnxrc sphenix3  32K Jan 13 11:26 hvcontrol_1008_64ch.bin
+-rwxr-xr-x 1 phnxrc sphenix3  30K Jan 13 11:04 hvcontrol_hcalburnin_64channels.bin
+-rwxrwxrwx 1 phnxrc sphenix3  327 Jan 13 12:17 hvtest.sh
+drwxr-xr-x 2 phnxrc sphenix3    7 Jan 12 11:44 MIBS
+-rw-r--r-- 1 phnxrc sphenix3    0 Jan 19 12:58 README
+drwxr-xr-x 2 phnxrc sphenix3   11 Jan 19 13:01 voltage_text_files
+-rw-r--r-- 1 phnxrc sphenix3 100K Jan 12 11:51 WIENER-CRATE-MIB.txt
+drwxr-xr-x 2 phnxrc sphenix3   13 Jan 23 09:16 voltage_text_files
+lrwxrwxrwx 1 phnxrc sphenix3   43 Jan 23 09:17 mpod_voltage.txt -> voltage_text_files/mpod_voltages_test_2.txt
+-rwxrwxrwx 1 phnxrc sphenix3   88 Jan 24 10:34 lvoff.sh
+-rwxrwxrwx 1 phnxrc sphenix3  113 Jan 24 10:36 lvon.sh
+
+Details:
+
+1. drwxr-xr-x 5 phnxrc sphenix3   12 Jan 19 13:03 .
+
+This folder
+
+2. drwxr-xr-x 8 phnxrc sphenix3   12 Jan 12 09:45 ..
+
+Containing folder (/drichf1/)
+
+3. drwxr-xr-x 2 phnxrc sphenix3    9 Jan 13 10:41 backup
+
+Folder containing scripts, etc., from the use of rack 3B4 during the HCal Assembly for burn-in
+
+4. -rw-r--r-- 1 phnxrc sphenix3    1 Jan 13 11:30 DisableChannels.txt
+
+A text file sourced by the MPODController to disable channels
+
+5. -rwxr-xr-x 1 phnxrc sphenix3  32K Jan 13 11:26 hvcontrol_1008_64ch.bin
+
+The main Perl script (usage: "./hvcontrol_1008_64ch.bin help")
+
+6. -rwxr-xr-x 1 phnxrc sphenix3  30K Jan 13 11:04 hvcontrol_hcalburnin_64channels.bin
+
+Another Perl script that accomplishes the same as #5, above.
+
+7. -rwxrwxrwx 1 phnxrc sphenix3  327 Jan 13 12:17 hvtest.sh
+
+Early attempt at a Bourne-shell script to get things set up, but not yet to turn on the voltage)
+
+8. drwxr-xr-x 2 phnxrc sphenix3    7 Jan 12 11:44 MIBS
+
+Directory containing prior implementations of the MIB text file that the MPODController uses to initialize itself
+
+9. lrwxrwxrwx 1 phnxrc sphenix3   47 Jan 19 13:02 mpod_voltage.txt -> voltage_text_files/mpod_voltages_jumpertest.txt
+
+An important soft link to an important text file containing the important information about which channels get what voltage.
+
+10. -rw-r--r-- 1 phnxrc sphenix3    0 Jan 19 12:58 README
+
+This file
+
+11. drwxr-xr-x 2 phnxrc sphenix3   11 Jan 19 13:01 voltage_text_files
+
+Directory of those voltage-setting text files (convention: use "voltages" rather than "voltage" in the files in this directory, just in case somebody wants to cp or mv them)
+
+12. -rw-r--r-- 1 phnxrc sphenix3 100K Jan 12 11:51 WIENER-CRATE-MIB.txt
+
+The text file that the MPODController uses to orient itself.
+
+13. -rwxrwxrwx 1 phnxrc sphenix3   88 Jan 24 10:34 lvoff.sh
+
+A quick script to turn on the low voltage from this folder
+
+14. -rwxrwxrwx 1 phnxrc sphenix3  113 Jan 24 10:36 lvon.sh
+
+A quick script to turn off the low voltage from this folder

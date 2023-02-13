@@ -1,0 +1,130 @@
+* Martin's Explanation & Demo of Working with the DAQ (2023-01-30)
+** Locations
+Log into daq01.sphenix.bnl.gov with phnxrc
+cd 1008_DAQ
+
+Can control everything from here ... except changing the mode-bits (as for triggers or for pulse frequency)
+
+2 units: GL1+GTM (hostname="ZCU102", named after the board name)
+         DAQ01
+
+In order to go to GL1+GTM, you have to log into DAQ01.
+
+DAQ01 talks to the DCM2s, which talk to the digitizers
+
+** GL1+GTM
+/usr/local/share/gl1gtm/standard.scheduler
+
+banks of modebits
+Number repeat  jump_to_target type
+0      100                    zero.modebits (zeros! 0x00 in 100 lines)
+1      0                      run.modebits  (one line has a 0x03)
+2      100                    zero.modebits
+3      0                      reset.modebits (0x02 in one line)
+4      1200000       4        zero.modebits (1.2e6 zeros) (repeats indef)
+
+each modebit has 120 entries, to match the 120 bunches that fill the rihc ring. The GTMs know where we are: it knows exactly when bunch zero is flying by
+eight or nine empty bunches at the end for the abort gap
+
+When GL1 sees soomething interesting, it imprints a trigger on this setup.
+
+/.../led_running.scheduler
+same as before, but adds more lines
+issues a pulse on crossing 119
+some time later, forces a trigger to happen (Martin's timing-in things from last friday ... we're running 6x the beam clock, so moving 1 tick of the beam-clock, moves the "viewing window" by 6)
+waits 10 ms ("757")
+issues a pulse, forces a trigger
+... and repeats
+
+trigger: force.modebits (has a 0x100) in one spot, after the pulse is sent.
+
+command: load_modebits 9 led_running.scheduler
+
+example: pedestal-running: has a forced-accept trigger, but no pulse initiation! :-)
+
+* Cold Start (from DAQ_1008 directory)
+** rcdaq_status.pl &
+... (or rcdaq_status.pl --Large &)
+
+** rcdaq_setup_1crate.sh
+... rcaq_clinet load librcdaqplugin_digitizer.so <-- that does all the work (plugin teaches rcdaq how to read-out a digitizer
+... ... rcdaq_client starts with no plugins
+... ... daq_status -ll gets longer as you add more plugins
+... rcdaq_client create_device device_digitizer 1 10 $CONFIGFILE
+... ... 1 means "normal event triggered by our GTM device"
+... "MYSELF" expands the path to the .so plugin with a full path
+... kills all definitions (kill_readlist)
+... rcdaq_client create_device device_file 9 900 "$MYSELF" <-- puts rcdaq config file into begin-run event (packet 900)
+... rcdaq_client create_device device_file 9 901 "$CONFIGFILE" <-- puts the config file into the begin-run event (next packet, 901)
+... dif run types
+
+** interactive
+rcdaq_server
+... serves as a monitor for debugging commands
+
+** lookgin at data
+ddump /data/phnxrc/1008/pulser/pulser-00001702-0000.prdf
+... starts at data events
+dlist -t 9 /data/phnxrc/1008/pulser/pulser-00001702-0000.prdf
+... lists the things in teh begin run event
+ddump -t 9 /data/phnxrc/1008/pulser/pulser-00001702-0000.prdf
+... shows you the configuration file
+... can add the temperature and other details to the begin-run event
+
+* Review of What we did before
+** normal running
+*** Begin
+daq_begin
+gtm_startrun
+(or daq_begin && gtm_startrun)
+*** End
+gtm_stop
+daq_end
+(or gtm_stop && daq_end)
+
+** Initializing the GTM
+*** General
+modebits is the most important thing: load_modebits 0 led_running.scheduler
+*** Underthehood
+behind gtm_startrun: gl1_gtm_client gtm_startrun
+gl1_gtm_client will give you the options
+gtm_status
+... 0x3f (shows you the enabled gtms) (turns on the first 6 GTMs, even though we only are using 1 for the HCal)
+... 0x3f0x3f (right shows you the enabled, left shows you the running)
+... gl1_gtm_client gtm_disable 5
+... ... gtm_status --> 0x01
+... fine-delay: sub-bunch-timing time adjustment
+... gtm_reset_schedulers
+... ... to all schedulers: go back to the beginning
+... gtm_reset_counters
+... ... changes the pre-scales back to zero
+*** Empty Events on Friday
+gl1_get_register 64 --> "-1    0xFFFFFFFF" (that means scaledowns are "disabled") (PHENIX could not do "off," but now we can)
+... we can't cross-reference which trigger fires the detector in real time, so it's best to shut it off.
+... we have 64 trigger inputs
+... we're only using the first few trigger bits
+... trigger 0 is actually connected to the beam clock (9.5 MHz)
+... ... it's 10MHz
+... ... on Friday: scaledown was 1e6, which gives a rate of 10 Hz
+... ... so that's why we had empty events: our trigger kept triggering at a higher rate
+... each trigger has scaledown
+*** Notes
+There is no "pulse trigger"; it *must* be done with modebits and timing and pseudoscripts
+*** Unexplained question
+The not-off clock trigger was the culprit for empty events. But what about the partial events?
+Too fast: force-accept overrides busy logic. GL1 wants some quiet time after the trigger to transmit; if you trigger again, too fast, it's up-for-grabs which packets are recorded when and where.
+
+* Running with a nice script
+** Setup
+rc_setup.sh
+... Run control
+... rc_client
+... takes over the daq_begin, etc.
+... Right now, overkill: one DAQ and one GTM
+... ... eventually, you'll have 60 instances of rcdaq and gtms
+... ... run_control will coordinate all of them
+rc_server
+... server
+** Gui
+RunControl.py &
+... color of modules is encoded: brown=not logging; red=stopped; green=going

@@ -1,0 +1,22 @@
+Controller Boards
+Each has 8 channels, covering 4 sectors (N,S): {0..7}
+
+$H: help file of availible commands (partial list)
+
+Gain Control: $A[channel][h|n]
+------------------------------
+Boards start in high-gain mode
+Example: "$A0h" ... sets the half-sector @ channel 0 to high-gain
+
+Pulse Control: $P[channel][setting]
+-----------------------------------
+Pre-amps control the pulse-mask in quartets: you can't control board-by-board
+Setting: 01, 02, 04, 08, 10, ... FF (best to use FF)
+
+LED Control
+-----------
+$LA, $LR, $LS, $LM
+
+$LR[channel] reads back the DAC value of the LED intensity for 5 LEDS
+$LS[channel][LED][DAC value]
+

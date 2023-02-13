@@ -1,0 +1,99 @@
+This folder houses many of the scripts to control the functioning of each sector/groups of sectors.total 32K
+1. -rw-r--r-- 1 phnxrc sphenix3    0 Dec 12 16:24 hcaltemp.py
+2. -rw-r--r-- 1 phnxrc sphenix3    0 Dec 12 16:24 hcaltemp_all.py
+3. drwxr-xr-x 8 phnxrc sphenix3   12 Jan 12 09:45 ..
+4. -rw-r--r-- 1 phnxrc sphenix3   99 Jan 29 17:13 README
+5. -rwxrwxrwx 1 phnxrc sphenix3  968 Jan 30 08:56 pulser.py
+
+Script to tune the pulse generators to a pulse-width of 100ns; use this when the rack turns on.
+
+6. -rwxrwxrwx 1 phnxrc sphenix3 1.7K Jan 30 09:42 gain.py
+
+Script to change the gain of the sectors. Usage: ./gain.py [outer|inner|both] [east|west|all] [high|normal]
+
+Note that the detector's start-up state is high-gain
+
+Run LED-All (001F) in low-gain; run test pulse in high-gain; run cosmics in high-gain. Normal operation with beam will be low-gain.
+
+Updated 2/9/23! See entry 15.
+
+7. -rwxrwxrwx 1 phnxrc sphenix3 1.8K Jan 30 09:43 test_pulse.py
+
+Script to start/stop the test pulse. Usage: ./test_pulse.py [outer|inner|both] [east|west|all] [on|off]
+
+Updated 2/9/23! See Entry # 14.
+
+8. -rwxrwxrwx 1 phnxrc sphenix3 2.2K Jan 30 12:42 led.py
+
+Script to start/stop the leds. Usage: ./led.py [outer|inner|both] [east|west|all] [on|off]
+
+Note that bias must be turned on to see signals. Use "../mpod/hvcontrol_1008_64ch.bin channel detailed all" to check the status. Go to the ../mpod directory and use "./hvcontrol_1008_64ch.bin channel on all" to turn things on. Ramp up is 1V/s.
+
+Updated 2/9/23! See entry # 16.
+
+9. -rw-r--r-- 1 phnxrc sphenix3 5.2K Jan 30 14:53 README_Example
+
+Notes from an impromptu talk about running the daq that Martin gave on 1/30/2023.
+
+10. -rw-r--r-- 1 phnxrc sphenix3  633 Jan 30 14:58 README_CONTROLLERS
+
+Notes about how to talk to the controller boards.
+
+11. -rwxrwxrwx 1 phnxrc sphenix3 2.4K Jan 30 15:17 channel_specific_bias.py
+    -rw-r--r-- 1 phnxrc sphenix3 2.4K Jan 30 15:17 bias_modification_list.py
+
+A script to implement channel-specific bias adjustments.
+
+12. drwxr-xr-x 2 phnxrc sphenix3   12 Jan 30 15:36 .
+
+13. -rwxrwxrwx 1 phnxrc sphenix3 2.0K Feb  9 05:55 do_not_use.read_test_pulse.py
+
+A script to read the status of the test-pulse mask ... do not use, because it un-sets the mask of channel 7 (to 0x0000/off)
+
+14. -rwxrwxrwx 1 phnxrc sphenix3 2.4K Feb  9 06:42 test_pulse.py
+
+updated to set the TP to all sectors
+
+15. -rwxrwxrwx 1 phnxrc sphenix3 2.3K Feb  9 06:43 gain.py
+
+updated to set the gain for all sectors
+
+16. -rwxrwxrwx 1 phnxrc sphenix3 2.0K Feb  9 06:44 read_gain.py
+
+script to read the gain!
+
+17. -rwxrwxrwx 1 phnxrc sphenix3 2.4K Feb  9 06:45 read_led.py
+
+script to read the led intensity and mask for each sector
+
+18. -rwxrwxrwx 1 phnxrc sphenix3 3.5K Feb  9 06:58 led.py
+
+updated to set the gain for all sectors & to allow for single-led setting
+
+19. -rwxrwxrwx 1 phnxrc sphenix3 2.2K Feb  9 08:21 read_channel_specific_bias.py
+
+reads the channel specific bias using the $GR0 command
+
+20. -rwxrwxrwx 1 phnxrc sphenix3 2.2K Feb  9 08:23 read_temp.py
+
+reads the temperature information using the $T0 command
+
+21. -rw-r--r-- 1 phnxrc sphenix3 2.2K Feb  9 08:25 read_leakage_currents.py
+
+reads the leakage-currents using the $I0 command, and it's only meaningful when the bias is on
+
+22. -rw-r--r-- 1 phnxrc sphenix3 2.1K Feb  9 08:25 read_voltages.py
+
+reads the voltages using the $U0 command; Steve fixed the Vb erroneous reading in the east yesterday (2/8/29) and in the west the day before (2/7/23)
+
+23. -rw-r--r-- 1 phnxrc sphenix3 2.2K Feb  9 08:26 read_PIN_diode.py
+
+reads the pin diodes using the $LA command
+
+24. -rwxrwxrwx 1 phnxrc sphenix3 2.2K Feb  9 08:28 do_not_use.read_everything_EMCal_style.py
+
+reads the "everything" information based on the $E command, which was implemented for the EMCal; it never worked during assembly in 912, so it might be similarly troublesome (overwriting new commands, undoing old command-results).
+
+25. -rwxrwxrwx 1 phnxrc sphenix3 1.6K Feb  9 08:55 do_this_before_voltage_modification.py
+
+script to set the channels-specific-bias setting to zero before setting it for real (Dan noticed on 2/9/23 that some channels were already set to unsual, unexpected, and undesireable values after powering up from a sudden shutdown)

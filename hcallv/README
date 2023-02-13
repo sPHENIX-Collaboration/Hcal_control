@@ -1,0 +1,5 @@
+These files are included for completeness purposes. The functions they provide are now handled by the sPHENIX "Itnition" framework.
+
+Use your HCal-Low-Voltage application in Ignition to control the HCals' low voltages!
+
+- DR (2023/02/13/Mon) :-)

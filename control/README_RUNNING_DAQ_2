@@ -1,0 +1,42 @@
+All,
+
+Joe first - thanks for the new prototype firmware, works like a charm
+and on the first shot. We now have more units to work with.
+
+(That was making the clock on the prototypes the 56.299 MHz that we run
+at now)
+
+Dan^2, Joey, Stefan, Silas - I'll move you HCal guys over to a prototype
+unit called gtm02 (gtm01 is currently taken for the TPC). This is the
+follow-through on what I promised at the coll. meeting, that most
+detectors will have their own unit to work with, and can work
+undisturbed by whatever everyone else is doing. So no more coordinating
+between the LL1 crowd and the HCal crowd - you are no longer sharing the
+"zcu102" GTM.
+
+The only thing you need to be aware of is that you need the right
+definition of the GTMHOST env. variable in the shell you work from on
+daq01. By default it is
+ 
+
+    [phnxrc@daq01 ~]$ echo $GTMHOST
+    zcu102
+
+(that's in the .bash_login) and if you work with the HCal, you need some
+discipline to set
+
+GTMHOST=gtm02
+
+I can see a number of mis-fires coming here (I had my share of those
+when we were switching between zcu102 and gtm01), so I will think of a
+way of making it less error-prone.
+
+The other thing to remember is that, in absence of a minipod
+multiple-fiber MPO, you will use 2 vGTMs (0 and 1) for west and east, respectively,
+and need to load the modebits to both if you run both.
+
+Sorry I should have added that I added those initially ad-hoc files to their proper place in git and am so able to install everything consistently, rather than copying from here to there. So do
+
+load_modebits 0 /usr/local/share/gl1gtm/led_running.scheduler
+
+for west and vGTM 1 for east. (I went up to see Dan and explained - we saw data)
